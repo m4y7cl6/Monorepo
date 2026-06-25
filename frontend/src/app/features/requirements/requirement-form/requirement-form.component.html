@@ -1,0 +1,90 @@
+<div class="page-container">
+  <app-page-header
+    [title]="isEditMode() ? 'REQUIREMENT.EDIT' : 'REQUIREMENT.NEW'"
+    [showBack]="true"
+  />
+
+  @if (isLoading()) {
+    <div class="loading-overlay"><mat-spinner diameter="40" /></div>
+  }
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="req-form">
+        <div class="form-row two-col">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'REQUIREMENT.REQ_NO' | translate }}</mat-label>
+            <input matInput formControlName="reqNo" />
+            @if (form.controls.reqNo.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'REQUIREMENT.PROJECT' | translate }}</mat-label>
+            <mat-select formControlName="projectId">
+              @for (p of projects(); track p.id) {
+                <mat-option [value]="p.id">{{ p.name }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.projectId.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'REQUIREMENT.REQ_TITLE' | translate }}</mat-label>
+            <input matInput formControlName="title" />
+            @if (form.controls.title.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'REQUIREMENT.DESCRIPTION' | translate }}</mat-label>
+            <textarea matInput formControlName="description" rows="4"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row two-col">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'REQUIREMENT.PRIORITY' | translate }}</mat-label>
+            <mat-select formControlName="priority">
+              @for (p of priorities; track p) {
+                <mat-option [value]="p">{{ 'PRIORITY.' + p | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'REQUIREMENT.STATUS' | translate }}</mat-label>
+            <mat-select formControlName="status">
+              @for (s of statuses; track s) {
+                <mat-option [value]="s">{{ 'STATUS.' + s | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="onCancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading()">
+            {{ 'COMMON.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<style>
+  .req-form { display: flex; flex-direction: column; }
+  .form-row { margin-bottom: 8px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+</style>

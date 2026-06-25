@@ -1,0 +1,46 @@
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin-bottom: 8px;
+}
+
+.app-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: #3f51b5;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.app-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #3f51b5;
+}
+
+.nav-item {
+  border-radius: 4px;
+  margin: 2px 8px;
+
+  &.active-link {
+    background-color: rgba(63, 81, 181, 0.1);
+    color: #3f51b5;
+
+    mat-icon {
+      color: #3f51b5;
+    }
+  }
+}
+
+mat-nav-list {
+  padding-top: 0;
+}

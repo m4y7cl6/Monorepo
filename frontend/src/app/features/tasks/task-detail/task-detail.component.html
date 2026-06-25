@@ -1,0 +1,136 @@
+<div class="page-container">
+  <app-page-header title="TASK.DETAIL" [showBack]="true" />
+
+  @if (isLoading()) {
+    <div class="loading-overlay"><mat-spinner diameter="40" /></div>
+  }
+
+  @if (task(); as t) {
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>{{ t.title }}</mat-card-title>
+        <mat-card-subtitle>{{ t.taskNo }}</mat-card-subtitle>
+        <div class="card-header-actions">
+          <app-status-badge [status]="t.status" type="task" />
+          <button mat-icon-button [matTooltip]="'COMMON.EDIT' | translate" (click)="navigateToEdit()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" [matTooltip]="'COMMON.DELETE' | translate" (click)="confirmDeleteTask()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">{{ 'TASK.PROJECT' | translate }}</span>
+            <span class="value">{{ t.projectName ?? '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ 'TASK.SPRINT' | translate }}</span>
+            <span class="value">{{ t.sprintName ?? '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ 'TASK.TYPE' | translate }}</span>
+            <span class="value">{{ 'TASK_TYPE.' + t.taskType | translate }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ 'TASK.PRIORITY' | translate }}</span>
+            <span class="value">
+              <app-status-badge [status]="t.priority" type="priority" />
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ 'TASK.ASSIGNEE' | translate }}</span>
+            <span class="value">{{ t.assigneeName ?? '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ 'TASK.DUE_DATE' | translate }}</span>
+            <span class="value">{{ t.dueDate ?? '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ 'TASK.ESTIMATE_HOURS' | translate }}</span>
+            <span class="value">{{ t.estimateHours ?? '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ 'TASK.ACTUAL_HOURS' | translate }}</span>
+            <span class="value">{{ t.actualHours ?? '—' }}</span>
+          </div>
+        </div>
+
+        @if (t.description) {
+          <mat-divider />
+          <div class="description-section">
+            <h3>{{ 'TASK.DESCRIPTION' | translate }}</h3>
+            <p>{{ t.description }}</p>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="worklogs-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'TASK.WORKLOGS' | translate }}</mat-card-title>
+        <div class="card-header-actions">
+          <button mat-flat-button color="primary" (click)="navigateToNewWorklog()">
+            <mat-icon>add</mat-icon>
+            {{ 'WORKLOG.NEW' | translate }}
+          </button>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="worklogs()">
+          <ng-container matColumnDef="workDate">
+            <th mat-header-cell *matHeaderCellDef>{{ 'WORKLOG.WORK_DATE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.workDate }}</td>
+          </ng-container>
+          <ng-container matColumnDef="userName">
+            <th mat-header-cell *matHeaderCellDef>{{ 'WORKLOG.USER' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.userName ?? '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="hours">
+            <th mat-header-cell *matHeaderCellDef>{{ 'WORKLOG.HOURS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.hours }}</td>
+          </ng-container>
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>{{ 'WORKLOG.DESCRIPTION' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.description ?? '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>{{ 'WORKLOG.ACTIONS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button color="warn" [matTooltip]="'COMMON.DELETE' | translate"
+                (click)="confirmDeleteWorklog(row.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="worklogColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: worklogColumns"></tr>
+        </table>
+        @if (worklogs().length === 0) {
+          <div class="empty-state">
+            <mat-icon>schedule</mat-icon>
+            <p>{{ 'COMMON.NO_DATA' | translate }}</p>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
+
+<style>
+  .detail-card, .worklogs-card { margin-bottom: 24px; }
+  .card-header-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  mat-card-header { display: flex; align-items: center; }
+  .info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 16px 0; }
+  .info-item { display: flex; flex-direction: column; gap: 4px; }
+  .label { font-size: 12px; color: rgba(0,0,0,0.54); font-weight: 500; text-transform: uppercase; }
+  .value { font-size: 14px; }
+  .description-section { margin-top: 16px; }
+  .description-section h3 { margin: 0 0 8px; color: rgba(0,0,0,0.6); font-size: 14px; }
+  table { width: 100%; }
+  @media (max-width: 768px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .info-grid { grid-template-columns: 1fr; } }
+</style>

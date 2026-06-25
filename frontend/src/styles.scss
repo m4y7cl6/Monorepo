@@ -1,0 +1,235 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$primary-palette: mat.define-palette(mat.$indigo-palette);
+$accent-palette: mat.define-palette(mat.$blue-palette, A200, A100, A400);
+$warn-palette: mat.define-palette(mat.$red-palette);
+
+$theme: mat.define-light-theme((
+  color: (
+    primary: $primary-palette,
+    accent: $accent-palette,
+    warn: $warn-palette,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+@include mat.all-component-themes($theme);
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #f5f5f5;
+}
+
+.page-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.mat-elevation-z2 {
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 999;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.fab-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+}
+
+.status-chip {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+mat-form-field {
+  min-width: 180px;
+}
+
+.table-container {
+  position: relative;
+  overflow-x: auto;
+}
+
+table.mat-mdc-table {
+  width: 100%;
+}
+
+.clickable-row {
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(63, 81, 181, 0.04);
+  }
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+
+  .back-btn {
+    flex-shrink: 0;
+  }
+
+  .header-text {
+    .page-title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
+    .page-subtitle {
+      margin: 4px 0 0;
+      color: rgba(0, 0, 0, 0.54);
+      font-size: 14px;
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: rgba(0, 0, 0, 0.38);
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+}
+
+// Status badges
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+// Project / Sprint statuses
+.badge-planning      { background: #e3f2fd; color: #1565c0; }
+.badge-development   { background: #e8f5e9; color: #2e7d32; }
+.badge-testing       { background: #fff8e1; color: #f57f17; }
+.badge-uat           { background: #f3e5f5; color: #7b1fa2; }
+.badge-production    { background: #e0f2f1; color: #00695c; }
+.badge-closed        { background: #fafafa; color: #757575; }
+
+// Task statuses
+.badge-backlog       { background: #f5f5f5; color: #616161; }
+.badge-todo          { background: #e3f2fd; color: #1565c0; }
+.badge-in-progress   { background: #fff3e0; color: #e65100; }
+.badge-in-review     { background: #f3e5f5; color: #7b1fa2; }
+.badge-done          { background: #e8f5e9; color: #2e7d32; }
+.badge-cancelled     { background: #ffebee; color: #c62828; }
+
+// Bug statuses
+.badge-new           { background: #e3f2fd; color: #1565c0; }
+.badge-confirmed     { background: #fff8e1; color: #f57f17; }
+.badge-fixed         { background: #e8f5e9; color: #2e7d32; }
+.badge-verified      { background: #e0f2f1; color: #00695c; }
+.badge-reopened      { background: #ffebee; color: #c62828; }
+.badge-wont-fix      { background: #fafafa; color: #757575; }
+
+// Requirement statuses
+.badge-draft         { background: #f5f5f5; color: #616161; }
+.badge-reviewing     { background: #fff8e1; color: #f57f17; }
+.badge-approved      { background: #e8f5e9; color: #2e7d32; }
+.badge-rejected      { background: #ffebee; color: #c62828; }
+.badge-implemented   { background: #e0f2f1; color: #00695c; }
+
+// Sprint statuses
+.badge-planned       { background: #e3f2fd; color: #1565c0; }
+.badge-active        { background: #e8f5e9; color: #2e7d32; }
+.badge-completed     { background: #f3e5f5; color: #7b1fa2; }
+
+// Priority
+.badge-low           { background: #f1f8e9; color: #558b2f; }
+.badge-medium        { background: #fff8e1; color: #f57f17; }
+.badge-high          { background: #fff3e0; color: #e65100; }
+.badge-critical      { background: #ffebee; color: #c62828; }
+
+// Severity
+.badge-trivial       { background: #f5f5f5; color: #616161; }
+.badge-minor         { background: #f1f8e9; color: #558b2f; }
+.badge-major         { background: #fff8e1; color: #f57f17; }
+.badge-blocker       { background: #b71c1c; color: #fff; }
+
+// Responsive
+@media (max-width: 768px) {
+  .page-container {
+    padding: 16px;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  mat-form-field {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: 8px;
+  }
+}

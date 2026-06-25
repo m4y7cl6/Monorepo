@@ -1,0 +1,86 @@
+<div class="page-container">
+  <app-page-header title="REQUIREMENT.TITLE" />
+
+  <mat-card>
+    <mat-card-content>
+      <div class="table-container" [class.loading]="isLoading()">
+        @if (isLoading()) {
+          <div class="loading-overlay"><mat-spinner diameter="40" /></div>
+        }
+
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="reqNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'REQUIREMENT.REQ_NO' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.reqNo }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'REQUIREMENT.REQ_TITLE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.title }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="projectName">
+            <th mat-header-cell *matHeaderCellDef>{{ 'REQUIREMENT.PROJECT' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.projectName ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef>{{ 'REQUIREMENT.PRIORITY' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <app-status-badge [status]="row.priority" type="priority" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'REQUIREMENT.STATUS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <app-status-badge [status]="row.status" type="requirement" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>{{ 'REQUIREMENT.ACTIONS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="action-buttons">
+                <button mat-icon-button [matTooltip]="'COMMON.EDIT' | translate"
+                  (click)="navigateToEdit(row.id, $event)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" [matTooltip]="'COMMON.DELETE' | translate"
+                  (click)="confirmDelete(row, $event)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" class="clickable-row"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [colSpan]="displayedColumns.length">
+              <div class="empty-state">
+                <mat-icon>list_alt</mat-icon>
+                <p>{{ 'COMMON.NO_DATA' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          [length]="totalElements()"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="[10, 20, 50]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+        />
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="fab-container">
+    <button mat-fab color="primary" [matTooltip]="'REQUIREMENT.NEW' | translate" (click)="navigateToCreate()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>

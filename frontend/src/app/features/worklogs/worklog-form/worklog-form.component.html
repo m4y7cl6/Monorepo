@@ -1,0 +1,75 @@
+<div class="page-container">
+  <app-page-header
+    [title]="isEditMode() ? 'WORKLOG.EDIT' : 'WORKLOG.NEW'"
+    [showBack]="true"
+  />
+
+  @if (isLoading()) {
+    <div class="loading-overlay"><mat-spinner diameter="40" /></div>
+  }
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="worklog-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'WORKLOG.TASK' | translate }}</mat-label>
+            <mat-select formControlName="taskId">
+              @for (t of tasks(); track t.id) {
+                <mat-option [value]="t.id">{{ t.taskNo }} — {{ t.title }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.taskId.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row two-col">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'WORKLOG.WORK_DATE' | translate }}</mat-label>
+            <input matInput [matDatepicker]="workDatePicker" formControlName="workDate" />
+            <mat-datepicker-toggle matIconSuffix [for]="workDatePicker" />
+            <mat-datepicker #workDatePicker />
+            @if (form.controls.workDate.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'WORKLOG.HOURS' | translate }}</mat-label>
+            <input matInput type="number" formControlName="hours" min="0.5" max="24" step="0.5" />
+            @if (form.controls.hours.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+            @if (form.controls.hours.hasError('min') || form.controls.hours.hasError('max')) {
+              <mat-error>0.5 - 24</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'WORKLOG.DESCRIPTION' | translate }}</mat-label>
+            <textarea matInput formControlName="description" rows="3"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="onCancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading()">
+            {{ 'COMMON.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<style>
+  .worklog-form { display: flex; flex-direction: column; }
+  .form-row { margin-bottom: 8px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+</style>

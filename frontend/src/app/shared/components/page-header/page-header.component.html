@@ -1,0 +1,13 @@
+<div class="page-header">
+  @if (showBack) {
+    <button mat-icon-button (click)="goBack()" [attr.aria-label]="'COMMON.BACK' | translate" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  }
+  <div class="header-text">
+    <h1 class="page-title">{{ title | translate }}</h1>
+    @if (subtitle) {
+      <p class="page-subtitle">{{ subtitle }}</p>
+    }
+  </div>
+</div>

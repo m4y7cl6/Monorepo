@@ -1,0 +1,32 @@
+<mat-toolbar color="primary" class="topbar">
+  <button mat-icon-button (click)="onMenuToggle()" [attr.aria-label]="'NAV.DASHBOARD' | translate">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span class="app-title">{{ 'APP.TITLE' | translate }}</span>
+
+  <span class="spacer"></span>
+
+  <button mat-button (click)="toggleLang()" class="lang-toggle">
+    <mat-icon>language</mat-icon>
+    <span>{{ currentLang() === 'zh-TW' ? '中文' : 'EN' }}</span>
+  </button>
+
+  <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
+    <mat-icon>account_circle</mat-icon>
+    <span class="user-name">{{ userName() }}</span>
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+
+  <mat-menu #userMenu="matMenu">
+    <div class="user-info" mat-menu-item disabled>
+      <p class="user-display-name">{{ userName() }}</p>
+      <p class="user-email">{{ userEmail() }}</p>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>{{ 'COMMON.LOGOUT' | translate }}</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

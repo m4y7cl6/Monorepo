@@ -1,0 +1,138 @@
+<div class="page-container">
+  <app-page-header
+    [title]="isEditMode() ? 'TASK.EDIT' : 'TASK.NEW'"
+    [showBack]="true"
+  />
+
+  @if (isLoading()) {
+    <div class="loading-overlay"><mat-spinner diameter="40" /></div>
+  }
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="task-form">
+        <div class="form-row two-col">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.TASK_NO' | translate }}</mat-label>
+            <input matInput formControlName="taskNo" />
+            @if (form.controls.taskNo.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.PROJECT' | translate }}</mat-label>
+            <mat-select formControlName="projectId">
+              @for (p of projects(); track p.id) {
+                <mat-option [value]="p.id">{{ p.name }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.projectId.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.SPRINT' | translate }}</mat-label>
+            <mat-select formControlName="sprintId">
+              <mat-option value="">—</mat-option>
+              @for (s of sprints(); track s.id) {
+                <mat-option [value]="s.id">{{ s.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'TASK.TASK_TITLE' | translate }}</mat-label>
+            <input matInput formControlName="title" />
+            @if (form.controls.title.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'TASK.DESCRIPTION' | translate }}</mat-label>
+            <textarea matInput formControlName="description" rows="4"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row three-col">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.TYPE' | translate }}</mat-label>
+            <mat-select formControlName="taskType">
+              @for (t of taskTypes; track t) {
+                <mat-option [value]="t">{{ 'TASK_TYPE.' + t | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.PRIORITY' | translate }}</mat-label>
+            <mat-select formControlName="priority">
+              @for (p of priorities; track p) {
+                <mat-option [value]="p">{{ 'PRIORITY.' + p | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.STATUS' | translate }}</mat-label>
+            <mat-select formControlName="status">
+              @for (s of statuses; track s) {
+                <mat-option [value]="s">{{ 'STATUS.' + s | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row two-col">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.ASSIGNEE' | translate }}</mat-label>
+            <mat-select formControlName="assigneeId">
+              <mat-option value="">—</mat-option>
+              @for (u of users(); track u.id) {
+                <mat-option [value]="u.id">{{ u.displayName ?? u.username }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.ESTIMATE_HOURS' | translate }}</mat-label>
+            <input matInput type="number" formControlName="estimateHours" min="0" step="0.5" />
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'TASK.DUE_DATE' | translate }}</mat-label>
+            <input matInput [matDatepicker]="duePicker" formControlName="dueDate" />
+            <mat-datepicker-toggle matIconSuffix [for]="duePicker" />
+            <mat-datepicker #duePicker />
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="onCancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading()">
+            {{ 'COMMON.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<style>
+  .task-form { display: flex; flex-direction: column; }
+  .form-row { margin-bottom: 8px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  @media (max-width: 768px) { .two-col, .three-col { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,148 @@
+<div class="page-container">
+  <app-page-header title="TASK.TITLE" />
+
+  <mat-card>
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'TASK.FILTER_STATUS' | translate }}</mat-label>
+          <mat-select [formControl]="statusFilter" (selectionChange)="applyFilters()">
+            <mat-option value="">{{ 'COMMON.ALL' | translate }}</mat-option>
+            @for (s of taskStatuses; track s) {
+              <mat-option [value]="s">{{ 'STATUS.' + s | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'TASK.FILTER_PROJECT' | translate }}</mat-label>
+          <mat-select [formControl]="projectFilter" (selectionChange)="applyFilters()">
+            <mat-option value="">{{ 'COMMON.ALL' | translate }}</mat-option>
+            @for (p of projects(); track p.id) {
+              <mat-option [value]="p.id">{{ p.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'TASK.FILTER_ASSIGNEE' | translate }}</mat-label>
+          <mat-select [formControl]="assigneeFilter" (selectionChange)="applyFilters()">
+            <mat-option value="">{{ 'COMMON.ALL' | translate }}</mat-option>
+            @for (u of users(); track u.id) {
+              <mat-option [value]="u.id">{{ u.displayName ?? u.username }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button (click)="resetFilters()">
+          <mat-icon>refresh</mat-icon>
+          {{ 'COMMON.RESET' | translate }}
+        </button>
+      </div>
+
+      <div class="table-container" [class.loading]="isLoading()">
+        @if (isLoading()) {
+          <div class="loading-overlay"><mat-spinner diameter="40" /></div>
+        }
+
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="taskNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'TASK.TASK_NO' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.taskNo }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'TASK.TASK_TITLE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.title }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="projectName">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.PROJECT' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.projectName ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="sprintName">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.SPRINT' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.sprintName ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="taskType">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.TYPE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ 'TASK_TYPE.' + row.taskType | translate }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.PRIORITY' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <app-status-badge [status]="row.priority" type="priority" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'TASK.STATUS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <app-status-badge [status]="row.status" type="task" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="assigneeName">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.ASSIGNEE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.assigneeName ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="dueDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'TASK.DUE_DATE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.dueDate ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.ACTIONS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="action-buttons">
+                <button mat-icon-button color="primary" [matTooltip]="'COMMON.VIEW' | translate"
+                  (click)="navigateToDetail(row.id)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button [matTooltip]="'COMMON.EDIT' | translate"
+                  (click)="navigateToEdit(row.id, $event)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" [matTooltip]="'COMMON.DELETE' | translate"
+                  (click)="confirmDelete(row, $event)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" class="clickable-row"
+            (click)="navigateToDetail(row.id)"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [colSpan]="displayedColumns.length">
+              <div class="empty-state">
+                <mat-icon>assignment</mat-icon>
+                <p>{{ 'COMMON.NO_DATA' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          [length]="totalElements()"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="[10, 20, 50]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+        />
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="fab-container">
+    <button mat-fab color="primary" [matTooltip]="'TASK.NEW' | translate" (click)="navigateToCreate()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>

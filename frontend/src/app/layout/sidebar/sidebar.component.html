@@ -1,0 +1,19 @@
+<div class="sidebar-header">
+  <span class="app-logo">PH</span>
+  <span class="app-name">ProjectHub</span>
+</div>
+
+<mat-nav-list>
+  @for (item of navItems; track item.route) {
+    <a
+      mat-list-item
+      [routerLink]="item.route"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: false }"
+      class="nav-item"
+    >
+      <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+      <span matListItemTitle>{{ item.label | translate }}</span>
+    </a>
+  }
+</mat-nav-list>
