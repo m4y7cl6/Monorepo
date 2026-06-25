@@ -204,5 +204,51 @@
   "USER": {
     "PROFILE": "Profile",
     "LOGOUT": "Logout"
+  },
+  "DASHBOARD": {
+    "TITLE": "Dashboard",
+    "TOTAL_PROJECTS": "Total Projects",
+    "ACTIVE_TASKS": "Active Tasks",
+    "OPEN_BUGS": "Open Bugs",
+    "HOURS_THIS_WEEK": "Hours This Week",
+    "TASK_STATUS_CHART": "Task Status Distribution",
+    "PROJECT_STATUS_CHART": "Project Status Distribution",
+    "BUG_SEVERITY_CHART": "Bug Severity Distribution",
+    "RECENT_TASKS": "Recent Tasks"
+  },
+  "KANBAN": {
+    "TITLE": "Kanban Board",
+    "SELECT_PROJECT": "Select Project",
+    "FILTER_ASSIGNEE": "Filter Assignee",
+    "FILTER_TYPE": "Filter Type",
+    "EMPTY_COLUMN": "Drag tasks here"
+  },
+  "SPRINT": {
+    "TITLE": "Sprint Management",
+    "NEW": "New Sprint",
+    "EDIT": "Edit Sprint",
+    "NAME": "Sprint Name",
+    "GOAL": "Sprint Goal",
+    "START_DATE": "Start Date",
+    "END_DATE": "End Date",
+    "STATUS": "Status",
+    "TASK_COUNT": "Task Count",
+    "ACTIVATE": "Activate",
+    "COMPLETE": "Complete",
+    "VELOCITY": "Velocity",
+    "ESTIMATED": "Estimated Hours",
+    "ACTUAL": "Actual Hours",
+    "COMPLETION": "Completion Rate",
+    "SPRINT_REPORT": "Sprint Report",
+    "PLANNED": "Planned",
+    "ACTIVE": "Active",
+    "COMPLETED": "Completed",
+    "CONFIRM_ACTIVATE": "Confirm activating this Sprint?",
+    "CONFIRM_COMPLETE": "Confirm completing this Sprint?",
+    "LOAD_ERROR": "Failed to load sprint",
+    "CREATE_SUCCESS": "Sprint created successfully",
+    "CREATE_ERROR": "Failed to create sprint",
+    "UPDATE_SUCCESS": "Sprint updated successfully",
+    "UPDATE_ERROR": "Failed to update sprint"
   }
 }

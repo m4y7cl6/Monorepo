@@ -1,0 +1,124 @@
+<div class="page-container">
+  <app-page-header
+    [title]="isEditMode() ? 'SPRINT.EDIT' : 'SPRINT.NEW'"
+    [showBack]="true"
+  />
+
+  @if (isLoading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40" />
+    </div>
+  }
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="sprint-form">
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'TASK.PROJECT' | translate }}</mat-label>
+            <mat-select formControlName="projectId">
+              @for (p of projects(); track p.id) {
+                <mat-option [value]="p.id">{{ p.name }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.projectId.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'SPRINT.NAME' | translate }}</mat-label>
+            <input matInput formControlName="name" />
+            @if (form.controls.name.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row two-col">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SPRINT.START_DATE' | translate }}</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
+            <mat-datepicker #startPicker />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SPRINT.END_DATE' | translate }}</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker" />
+            <mat-datepicker #endPicker />
+            @if (form.hasError('endBeforeStart')) {
+              <mat-error>{{ 'COMMON.INVALID_DATE' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'SPRINT.GOAL' | translate }}</mat-label>
+            <textarea matInput formControlName="goal" rows="3"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SPRINT.STATUS' | translate }}</mat-label>
+            <mat-select formControlName="status">
+              @for (s of statuses; track s) {
+                <mat-option [value]="s">{{ 'STATUS.' + s | translate }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.status.hasError('required')) {
+              <mat-error>{{ 'COMMON.REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="onCancel()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading()">
+            {{ 'COMMON.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<style>
+  .sprint-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .form-row {
+    margin-bottom: 8px;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .loading-overlay {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+  }
+  @media (max-width: 600px) {
+    .two-col {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

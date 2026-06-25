@@ -19,6 +19,9 @@ interface NavItem {
 })
 export class SidebarComponent {
   readonly navItems: NavItem[] = [
+    { label: 'NAV.DASHBOARD', icon: 'dashboard', route: '/dashboard' },
+    { label: 'NAV.KANBAN', icon: 'view_kanban', route: '/kanban' },
+    { label: 'NAV.SPRINT', icon: 'sprint', route: '/sprints' },
     { label: 'NAV.PROJECTS', icon: 'folder', route: '/projects' },
     { label: 'NAV.TASKS', icon: 'assignment', route: '/tasks' },
     { label: 'NAV.BUGS', icon: 'bug_report', route: '/bugs' },

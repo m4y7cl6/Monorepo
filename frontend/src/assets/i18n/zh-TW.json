@@ -204,5 +204,51 @@
   "USER": {
     "PROFILE": "個人資料",
     "LOGOUT": "登出"
+  },
+  "DASHBOARD": {
+    "TITLE": "儀表板",
+    "TOTAL_PROJECTS": "專案總數",
+    "ACTIVE_TASKS": "進行中任務",
+    "OPEN_BUGS": "待處理問題",
+    "HOURS_THIS_WEEK": "本週工時",
+    "TASK_STATUS_CHART": "任務狀態分佈",
+    "PROJECT_STATUS_CHART": "專案狀態分佈",
+    "BUG_SEVERITY_CHART": "問題嚴重度分佈",
+    "RECENT_TASKS": "最近任務"
+  },
+  "KANBAN": {
+    "TITLE": "看板",
+    "SELECT_PROJECT": "選擇專案",
+    "FILTER_ASSIGNEE": "篩選負責人",
+    "FILTER_TYPE": "篩選類型",
+    "EMPTY_COLUMN": "拖曳任務至此"
+  },
+  "SPRINT": {
+    "TITLE": "Sprint 管理",
+    "NEW": "新增 Sprint",
+    "EDIT": "編輯 Sprint",
+    "NAME": "Sprint 名稱",
+    "GOAL": "Sprint 目標",
+    "START_DATE": "開始日期",
+    "END_DATE": "結束日期",
+    "STATUS": "狀態",
+    "TASK_COUNT": "任務數",
+    "ACTIVATE": "啟動",
+    "COMPLETE": "完成",
+    "VELOCITY": "速度",
+    "ESTIMATED": "預估工時",
+    "ACTUAL": "實際工時",
+    "COMPLETION": "完成率",
+    "SPRINT_REPORT": "Sprint 報告",
+    "PLANNED": "計畫中",
+    "ACTIVE": "進行中",
+    "COMPLETED": "已完成",
+    "CONFIRM_ACTIVATE": "確認啟動此 Sprint？",
+    "CONFIRM_COMPLETE": "確認完成此 Sprint？",
+    "LOAD_ERROR": "載入 Sprint 失敗",
+    "CREATE_SUCCESS": "Sprint 已成功建立",
+    "CREATE_ERROR": "建立 Sprint 失敗",
+    "UPDATE_SUCCESS": "Sprint 已成功更新",
+    "UPDATE_ERROR": "更新 Sprint 失敗"
   }
 }

@@ -1,0 +1,162 @@
+<div class="page-container">
+  <app-page-header title="SPRINT.TITLE" [showBack]="true" />
+
+  @if (isLoading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="48" />
+    </div>
+  }
+
+  @if (sprint(); as s) {
+    <!-- Sprint Info -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>{{ s.name }}</mat-card-title>
+        <mat-card-subtitle>
+          <app-status-badge [status]="s.status" type="sprint" />
+        </mat-card-subtitle>
+        <span class="spacer"></span>
+        <button mat-icon-button (click)="navigateToEdit()">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">{{ 'SPRINT.START_DATE' | translate }}</span>
+            <span class="info-value">{{ s.startDate ?? '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">{{ 'SPRINT.END_DATE' | translate }}</span>
+            <span class="info-value">{{ s.endDate ?? '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">{{ 'TASK.PROJECT' | translate }}</span>
+            <span class="info-value">{{ s.projectName ?? '—' }}</span>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">{{ 'SPRINT.GOAL' | translate }}</span>
+            <span class="info-value">{{ s.goal ?? '—' }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Sprint Report -->
+    <mat-card class="report-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'SPRINT.SPRINT_REPORT' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="report-grid">
+          <!-- Task status breakdown -->
+          <div class="report-section">
+            <h4>{{ 'SPRINT.STATUS' | translate }}</h4>
+            @for (item of taskStatusCounts(); track item.status) {
+              <div class="status-row">
+                <app-status-badge [status]="item.status" type="task" />
+                <span class="status-count">{{ item.count }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Completion -->
+          <div class="report-section">
+            <h4>{{ 'SPRINT.COMPLETION' | translate }}</h4>
+            <div class="progress-label">
+              <span>{{ completionPct() }}%</span>
+              <span>{{ tasks().length }} {{ 'SPRINT.TASK_COUNT' | translate }}</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="completionPct()"
+              color="primary"
+            />
+          </div>
+
+          <!-- Velocity -->
+          <div class="report-section">
+            <h4>{{ 'SPRINT.VELOCITY' | translate }}</h4>
+            <div class="velocity-bars">
+              <div class="velocity-row">
+                <span class="vel-label">{{ 'SPRINT.ESTIMATED' | translate }}</span>
+                <div class="vel-track">
+                  <div class="vel-fill est-fill" [style.width.%]="100"></div>
+                </div>
+                <span class="vel-val">{{ totalEstimated() }}h</span>
+              </div>
+              <div class="velocity-row">
+                <span class="vel-label">{{ 'SPRINT.ACTUAL' | translate }}</span>
+                <div class="vel-track">
+                  <div class="vel-fill act-fill" [style.width.%]="velocityPct()"></div>
+                </div>
+                <span class="vel-val">{{ totalActual() }}h</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tasks Table -->
+    <mat-card class="tasks-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'TASK.TITLE' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="taskDataSource" class="full-table">
+          <ng-container matColumnDef="taskNo">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.TASK_NO' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.taskNo }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.TASK_TITLE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.title }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.STATUS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <app-status-badge [status]="row.status" type="task" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.PRIORITY' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <app-status-badge [status]="row.priority" type="priority" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="assigneeName">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.ASSIGNEE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.assigneeName ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="estimateHours">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.ESTIMATE_HOURS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.estimateHours ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actualHours">
+            <th mat-header-cell *matHeaderCellDef>{{ 'TASK.ACTUAL_HOURS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.actualHours ?? '—' }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [colSpan]="displayedColumns.length">
+              <div class="empty-state">
+                <mat-icon>assignment</mat-icon>
+                <p>{{ 'COMMON.NO_DATA' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

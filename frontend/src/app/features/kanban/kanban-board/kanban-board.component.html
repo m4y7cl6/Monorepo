@@ -1,0 +1,90 @@
+<div class="page-container">
+  <app-page-header title="KANBAN.TITLE" />
+
+  <!-- Top toolbar -->
+  <mat-toolbar class="kanban-toolbar">
+    <mat-form-field appearance="outline" class="toolbar-field">
+      <mat-label>{{ 'KANBAN.SELECT_PROJECT' | translate }}</mat-label>
+      <mat-select [formControl]="projectControl">
+        <mat-option [value]="null">{{ 'COMMON.ALL' | translate }}</mat-option>
+        @for (p of projects(); track p.id) {
+          <mat-option [value]="p.id">{{ p.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="toolbar-field">
+      <mat-label>{{ 'KANBAN.FILTER_ASSIGNEE' | translate }}</mat-label>
+      <mat-icon matPrefix>person_search</mat-icon>
+      <input matInput [formControl]="assigneeControl" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="toolbar-field">
+      <mat-label>{{ 'KANBAN.FILTER_TYPE' | translate }}</mat-label>
+      <mat-select [formControl]="typeControl">
+        <mat-option value="">{{ 'COMMON.ALL' | translate }}</mat-option>
+        @for (t of taskTypes; track t) {
+          <mat-option [value]="t">{{ 'TASK_TYPE.' + t | translate }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </mat-toolbar>
+
+  @if (isLoading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="48" />
+    </div>
+  }
+
+  <!-- Kanban board -->
+  <div class="kanban-board">
+    @for (col of columns; track col.status) {
+      <div class="kanban-column">
+        <div class="column-header">
+          <app-status-badge [status]="col.status" type="task" />
+          <span class="count">{{ tasksByStatus()[col.status]?.length || 0 }}</span>
+        </div>
+
+        <div
+          cdkDropList
+          [id]="'drop-' + col.status"
+          [cdkDropListData]="tasksByStatus()[col.status]"
+          [cdkDropListConnectedTo]="connectedLists"
+          (cdkDropListDropped)="onDrop($event, col.status)"
+          class="kanban-drop-list"
+        >
+          @for (task of tasksByStatus()[col.status]; track task.id) {
+            <mat-card cdkDrag class="kanban-card" [cdkDragData]="task">
+              <mat-card-header>
+                <div class="card-header-row">
+                  <span class="task-no">{{ task.taskNo }}</span>
+                  <app-status-badge [status]="task.priority" type="priority" />
+                </div>
+              </mat-card-header>
+              <mat-card-content>
+                <p class="task-title">{{ task.title }}</p>
+                <div class="card-meta">
+                  <span class="meta-item">
+                    <mat-icon>person</mat-icon>
+                    <span>{{ task.assigneeName || '—' }}</span>
+                  </span>
+                  <span class="meta-item">
+                    <mat-icon>calendar_today</mat-icon>
+                    <span>{{ task.dueDate || '—' }}</span>
+                  </span>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+
+          @if (tasksByStatus()[col.status]?.length === 0) {
+            <div class="empty-column">
+              <mat-icon>inbox</mat-icon>
+              <span>{{ 'KANBAN.EMPTY_COLUMN' | translate }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

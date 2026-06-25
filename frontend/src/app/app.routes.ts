@@ -8,7 +8,22 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: 'projects', pathMatch: 'full' },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./features/dashboard/dashboard.routes').then((m) => m.DASHBOARD_ROUTES)
+      },
+      {
+        path: 'kanban',
+        loadChildren: () =>
+          import('./features/kanban/kanban.routes').then((m) => m.KANBAN_ROUTES)
+      },
+      {
+        path: 'sprints',
+        loadChildren: () =>
+          import('./features/sprints/sprints.routes').then((m) => m.SPRINT_ROUTES)
+      },
       {
         path: 'projects',
         loadChildren: () =>
