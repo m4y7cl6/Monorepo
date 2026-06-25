@@ -1,0 +1,31 @@
+# Maven
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes (local)
+data/
+
+# Environment secrets
+.env
+*.env.local
+
+# Logs
+*.log
+logs/
