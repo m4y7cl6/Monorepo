@@ -107,7 +107,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/projecthub
       SPRING_DATASOURCE_USERNAME: projecthub
       SPRING_DATASOURCE_PASSWORD: projecthub123
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/projecthub
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8180/realms/projecthub
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/projecthub/protocol/openid-connect/certs
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: minioadmin
