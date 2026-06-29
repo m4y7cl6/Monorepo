@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { SprintService } from '../../../core/services/sprint.service';
 import { ProjectService } from '../../../core/services/project.service';
 import { Sprint } from '../../../core/models/sprint.model';
@@ -128,12 +129,17 @@ export class SprintListComponent implements OnInit {
         this.sprintService.activate(sprint.id).subscribe({
           next: () => {
             this.isLoading.set(false);
-            this.showSuccess('SPRINT.ACTIVATE');
+            this.showSuccess('SPRINT.ACTIVATE_SUCCESS');
             this.reloadCurrent();
           },
-          error: () => {
+          error: (err: HttpErrorResponse) => {
             this.isLoading.set(false);
-            this.showError('SPRINT.LOAD_ERROR');
+            const detail = err.error?.detail;
+            if (detail) {
+              this.snackBar.open(detail, '', { duration: 5000, panelClass: ['snack-error'] });
+            } else {
+              this.showError('SPRINT.ACTIVATE_ERROR');
+            }
           }
         });
       }
@@ -152,12 +158,17 @@ export class SprintListComponent implements OnInit {
         this.sprintService.complete(sprint.id).subscribe({
           next: () => {
             this.isLoading.set(false);
-            this.showSuccess('SPRINT.COMPLETE');
+            this.showSuccess('SPRINT.COMPLETE_SUCCESS');
             this.reloadCurrent();
           },
-          error: () => {
+          error: (err: HttpErrorResponse) => {
             this.isLoading.set(false);
-            this.showError('SPRINT.LOAD_ERROR');
+            const detail = err.error?.detail;
+            if (detail) {
+              this.snackBar.open(detail, '', { duration: 5000, panelClass: ['snack-error'] });
+            } else {
+              this.showError('SPRINT.COMPLETE_ERROR');
+            }
           }
         });
       }
