@@ -13,7 +13,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U projecthub -d projecthub"]
@@ -70,7 +70,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - minio_data:/data
+      - ./minio_data:/data
     healthcheck:
       test: ["CMD", "mc", "ready", "local"]
       interval: 15s
@@ -145,10 +145,6 @@ services:
         condition: service_healthy
     networks:
       - projecthub-net
-
-volumes:
-  postgres_data:
-  minio_data:
 
 networks:
   projecthub-net:
