@@ -26,6 +26,8 @@
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true,
       "redirectUris": [
+        "http://localhost",
+        "http://localhost/",
         "http://localhost/*",
         "http://localhost:4200/*",
         "http://localhost:80/*",
