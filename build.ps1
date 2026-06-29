@@ -27,6 +27,15 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $Root = $PSScriptRoot
 
+# ─── Java 21 override ───────────────────────────────────────────────────────
+# Maven uses $env:JAVA_HOME; override here if the system default is not Java 21.
+$Java21Home = "D:\AORS\Domain\Tool\graalvm-jdk-21.0.4+8.1"
+if (Test-Path $Java21Home) {
+    $env:JAVA_HOME = $Java21Home
+    $env:PATH = "$Java21Home\bin;$env:PATH"
+    Write-Host "[INFO] Using Java 21: $Java21Home" -ForegroundColor DarkGray
+}
+
 function Write-Step([string]$msg) {
     Write-Host "`n==> $msg" -ForegroundColor Cyan
 }
