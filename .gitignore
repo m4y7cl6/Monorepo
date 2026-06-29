@@ -19,8 +19,9 @@ frontend/.angular/
 .DS_Store
 Thumbs.db
 
-# Docker volumes (local)
-data/
+# Docker volumes (local bind-mounts)
+postgres_data/
+minio_data/
 
 # Environment secrets
 .env
