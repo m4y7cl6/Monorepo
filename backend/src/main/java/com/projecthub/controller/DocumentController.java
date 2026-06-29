@@ -16,12 +16,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/documents")
 @Tag(name = "Documents", description = "Document storage and retrieval via MinIO")
 public class DocumentController {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of("uploadedAt", "createdAt", "updatedAt", "fileName", "fileSize", "contentType");
 
     private final DocumentService documentService;
 
@@ -38,9 +42,10 @@ public class DocumentController {
             @RequestParam(defaultValue = "uploadedAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
 
+        String safeSort = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "uploadedAt";
         Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
+                ? Sort.by(safeSort).ascending()
+                : Sort.by(safeSort).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(documentService.findAll(pageable));
     }

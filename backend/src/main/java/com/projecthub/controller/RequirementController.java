@@ -18,11 +18,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
 @Tag(name = "Requirements", description = "Requirements management")
 public class RequirementController {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of("createdAt", "updatedAt", "reqNo", "title", "status", "priority");
 
     private final RequirementService requirementService;
 
@@ -39,9 +43,10 @@ public class RequirementController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
 
+        String safeSort = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
         Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
+                ? Sort.by(safeSort).ascending()
+                : Sort.by(safeSort).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(requirementService.findAll(pageable));
     }
