@@ -10,7 +10,7 @@ public record SprintDto(
         UUID id,
         UUID projectId,
         String projectName,
-        String sprintName,
+        String name,
         LocalDate startDate,
         LocalDate endDate,
         String goal,

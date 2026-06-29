@@ -73,7 +73,7 @@ class SprintServiceTest {
 
             SprintDto result = sprintService.create(request);
 
-            assertThat(result.sprintName()).isEqualTo("Sprint 1");
+            assertThat(result.name()).isEqualTo("Sprint 1");
             verify(sprintRepository).save(sprint);
         }
 

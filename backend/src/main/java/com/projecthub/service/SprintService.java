@@ -76,7 +76,7 @@ public class SprintService {
         Sprint sprint = sprintRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sprint", "id", id));
 
-        sprint.setSprintName(request.sprintName());
+        sprint.setSprintName(request.name());
         sprint.setStartDate(request.startDate());
         sprint.setEndDate(request.endDate());
         sprint.setGoal(request.goal());

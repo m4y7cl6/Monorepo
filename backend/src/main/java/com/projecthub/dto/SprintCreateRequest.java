@@ -14,7 +14,7 @@ public record SprintCreateRequest(
 
         @NotBlank(message = "Sprint name is required")
         @Size(max = 255, message = "Sprint name must not exceed 255 characters")
-        String sprintName,
+        String name,
 
         LocalDate startDate,
 
