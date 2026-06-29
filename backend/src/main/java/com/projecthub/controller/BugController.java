@@ -87,7 +87,8 @@ public class BugController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BugDto> updateStatus(
             @PathVariable UUID id,
-            @Parameter(description = "New bug status") @RequestParam BugStatus status) {
+            @RequestBody java.util.Map<String, String> body) {
+        BugStatus status = BugStatus.valueOf(body.get("status"));
         return ResponseEntity.ok(bugService.updateStatus(id, status));
     }
 

@@ -1,8 +1,9 @@
 package com.projecthub.entity.enums;
 
 public enum BugSeverity {
-    LOW,
-    MEDIUM,
-    HIGH,
-    CRITICAL
+    TRIVIAL,
+    MINOR,
+    MAJOR,
+    CRITICAL,
+    BLOCKER
 }

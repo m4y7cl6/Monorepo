@@ -24,6 +24,10 @@ public interface RequirementRepository extends JpaRepository<Requirement, UUID> 
 
     List<Requirement> findByProjectIdAndStatusAndDeletedAtIsNull(UUID projectId, RequirementStatus status);
 
+    long countByDeletedAtIsNull();
+
+    long countByStatusAndDeletedAtIsNull(RequirementStatus status);
+
     long countByProjectIdAndDeletedAtIsNull(UUID projectId);
 
     boolean existsByReqNo(String reqNo);

@@ -189,7 +189,8 @@ class TaskControllerTest {
                     .thenReturn(taskDto);
 
             mockMvc.perform(patch("/api/tasks/{id}/status", TestDataFactory.TASK_ID)
-                            .param("status", "IN_PROGRESS"))
+                            .contentType("application/json")
+                            .content("{\"status\":\"IN_PROGRESS\"}"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(TestDataFactory.TASK_ID.toString()));
         }
@@ -203,7 +204,8 @@ class TaskControllerTest {
                     .thenThrow(new ResourceNotFoundException("Task", "id", unknownId));
 
             mockMvc.perform(patch("/api/tasks/{id}/status", unknownId)
-                            .param("status", "DONE"))
+                            .contentType("application/json")
+                            .content("{\"status\":\"DONE\"}"))
                     .andExpect(status().isNotFound());
         }
 
@@ -211,7 +213,8 @@ class TaskControllerTest {
         @DisplayName("updateStatus_whenUnauthenticated_returns401")
         void updateStatus_whenUnauthenticated_returns401() throws Exception {
             mockMvc.perform(patch("/api/tasks/{id}/status", TestDataFactory.TASK_ID)
-                            .param("status", "DONE"))
+                            .contentType("application/json")
+                            .content("{\"status\":\"DONE\"}"))
                     .andExpect(status().isUnauthorized());
         }
     }

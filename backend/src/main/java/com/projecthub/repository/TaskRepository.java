@@ -34,6 +34,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     Optional<Task> findByIdAndDeletedAtIsNull(UUID id);
 
+    long countByDeletedAtIsNull();
+
     long countByStatus(TaskStatus status);
 
     long countByProjectIdAndStatus(UUID projectId, TaskStatus status);

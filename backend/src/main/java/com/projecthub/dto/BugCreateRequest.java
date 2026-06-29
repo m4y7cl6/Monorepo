@@ -1,11 +1,13 @@
 package com.projecthub.dto;
 
 import com.projecthub.entity.enums.BugSeverity;
+import com.projecthub.entity.enums.BugStatus;
 import com.projecthub.entity.enums.TaskPriority;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record BugCreateRequest(
@@ -26,7 +28,11 @@ public record BugCreateRequest(
 
         TaskPriority priority,
 
+        BugStatus status,
+
         UUID assigneeId,
 
-        UUID reporterId
+        UUID reporterId,
+
+        LocalDate dueDate
 ) {}

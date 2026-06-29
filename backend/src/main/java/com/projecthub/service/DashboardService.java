@@ -3,11 +3,12 @@ package com.projecthub.service;
 import com.projecthub.dto.DashboardSummaryDto;
 import com.projecthub.entity.enums.BugSeverity;
 import com.projecthub.entity.enums.BugStatus;
-
 import com.projecthub.entity.enums.ProjectStatus;
+import com.projecthub.entity.enums.RequirementStatus;
 import com.projecthub.entity.enums.TaskStatus;
 import com.projecthub.repository.BugRepository;
 import com.projecthub.repository.ProjectRepository;
+import com.projecthub.repository.RequirementRepository;
 import com.projecthub.repository.TaskRepository;
 import com.projecthub.repository.WorklogRepository;
 import org.slf4j.Logger;
@@ -19,8 +20,6 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,95 +30,62 @@ public class DashboardService {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final BugRepository bugRepository;
+    private final RequirementRepository requirementRepository;
     private final WorklogRepository worklogRepository;
 
     public DashboardService(ProjectRepository projectRepository,
                             TaskRepository taskRepository,
                             BugRepository bugRepository,
+                            RequirementRepository requirementRepository,
                             WorklogRepository worklogRepository) {
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
         this.bugRepository = bugRepository;
+        this.requirementRepository = requirementRepository;
         this.worklogRepository = worklogRepository;
     }
 
     public DashboardSummaryDto getSummary() {
         log.debug("Computing dashboard summary");
 
-        return new DashboardSummaryDto(
-                buildProjectSummary(),
-                buildTaskSummary(),
-                buildBugSummary(),
-                buildWorklogSummary()
-        );
-    }
+        // Projects
+        long totalProjects = projectRepository.countByDeletedAtIsNull();
+        long closedProjects = projectRepository.countByStatusAndDeletedAtIsNull(ProjectStatus.CLOSED);
+        long activeProjects = totalProjects - closedProjects;
 
-    private DashboardSummaryDto.ProjectSummary buildProjectSummary() {
-        long total = projectRepository.count();
-        long planning = projectRepository.countByStatusAndDeletedAtIsNull(ProjectStatus.PLANNING);
-        long development = projectRepository.countByStatusAndDeletedAtIsNull(ProjectStatus.DEVELOPMENT);
-        long testing = projectRepository.countByStatusAndDeletedAtIsNull(ProjectStatus.TESTING);
-        long uat = projectRepository.countByStatusAndDeletedAtIsNull(ProjectStatus.UAT);
-        long production = projectRepository.countByStatusAndDeletedAtIsNull(ProjectStatus.PRODUCTION);
-        long closed = projectRepository.countByStatusAndDeletedAtIsNull(ProjectStatus.CLOSED);
+        // Tasks
+        long totalTasks = taskRepository.countByDeletedAtIsNull();
+        long backlogTasks = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.BACKLOG);
+        long openTasks = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.TODO);
+        long inProgressTasks = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.IN_PROGRESS);
+        long reviewTasks = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.REVIEW);
+        long testingTasks = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.TESTING);
+        long doneTasks = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.DONE);
 
-        return new DashboardSummaryDto.ProjectSummary(
-                total, planning, development, testing, uat, production, closed);
-    }
+        // Bugs
+        long totalBugs = bugRepository.countByDeletedAtIsNull();
+        long openBugs = bugRepository.countByStatusAndDeletedAtIsNull(BugStatus.NEW);
+        long criticalBugs = bugRepository.countBySeverityAndDeletedAtIsNull(BugSeverity.CRITICAL);
 
-    private DashboardSummaryDto.TaskSummary buildTaskSummary() {
-        long total = taskRepository.count();
-        long backlog = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.BACKLOG);
-        long todo = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.TODO);
-        long inProgress = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.IN_PROGRESS);
-        long review = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.REVIEW);
-        long testing = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.TESTING);
-        long done = taskRepository.countByStatusAndDeletedAtIsNull(TaskStatus.DONE);
+        // Requirements
+        long totalRequirements = requirementRepository.countByDeletedAtIsNull();
+        long approvedRequirements = requirementRepository.countByStatusAndDeletedAtIsNull(RequirementStatus.APPROVED);
 
-        Map<String, Long> byProject = new HashMap<>();
-
-        return new DashboardSummaryDto.TaskSummary(
-                total, backlog, todo, inProgress, review, testing, done, byProject);
-    }
-
-    private DashboardSummaryDto.BugSummary buildBugSummary() {
-        long total = bugRepository.count();
-        long open = bugRepository.countByStatusAndDeletedAtIsNull(BugStatus.OPEN);
-        long inProgress = bugRepository.countByStatusAndDeletedAtIsNull(BugStatus.IN_PROGRESS);
-        long resolved = bugRepository.countByStatusAndDeletedAtIsNull(BugStatus.RESOLVED);
-        long closed = bugRepository.countByStatusAndDeletedAtIsNull(BugStatus.CLOSED);
-        long critical = bugRepository.countBySeverityAndDeletedAtIsNull(BugSeverity.CRITICAL);
-        long high = bugRepository.countBySeverityAndDeletedAtIsNull(BugSeverity.HIGH);
-
-        return new DashboardSummaryDto.BugSummary(
-                total, open, inProgress, resolved, closed, critical, high);
-    }
-
-    private DashboardSummaryDto.WorklogSummary buildWorklogSummary() {
+        // Worklogs — total count and hours this week
+        long totalWorklogs = worklogRepository.count();
         LocalDate today = LocalDate.now();
         LocalDate weekStart = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate weekEnd = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        LocalDate monthStart = today.with(TemporalAdjusters.firstDayOfMonth());
-        LocalDate monthEnd = today.with(TemporalAdjusters.lastDayOfMonth());
-
         BigDecimal hoursThisWeek = worklogRepository.sumHoursByDateRange(weekStart, weekEnd);
-        BigDecimal hoursThisMonth = worklogRepository.sumHoursByDateRange(monthStart, monthEnd);
-
         if (hoursThisWeek == null) {
             hoursThisWeek = BigDecimal.ZERO;
         }
-        if (hoursThisMonth == null) {
-            hoursThisMonth = BigDecimal.ZERO;
-        }
 
-        long activeContributors = worklogRepository.findByWorkDateBetween(weekStart, weekEnd)
-                .stream()
-                .map(w -> w.getUser().getId())
-                .distinct()
-                .count();
-
-        return new DashboardSummaryDto.WorklogSummary(
-                hoursThisWeek, hoursThisMonth, activeContributors);
+        return new DashboardSummaryDto(
+                totalProjects, activeProjects,
+                totalTasks, backlogTasks, openTasks, inProgressTasks, reviewTasks, testingTasks, doneTasks,
+                totalBugs, openBugs, criticalBugs,
+                totalRequirements, approvedRequirements,
+                totalWorklogs, hoursThisWeek);
     }
 }

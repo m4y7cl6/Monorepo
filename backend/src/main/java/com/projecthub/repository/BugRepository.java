@@ -25,6 +25,8 @@ public interface BugRepository extends JpaRepository<Bug, UUID> {
 
     Optional<Bug> findByIdAndDeletedAtIsNull(UUID id);
 
+    long countByDeletedAtIsNull();
+
     long countByStatus(BugStatus status);
 
     long countBySeverityAndDeletedAtIsNull(BugSeverity severity);

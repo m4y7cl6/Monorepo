@@ -47,10 +47,12 @@ export class DashboardComponent implements OnInit {
     if (!s) return [];
     const total = s.totalTasks || 1;
     return [
-      { label: 'STATUS.BACKLOG', color: '#9e9e9e', pct: 0 },
-      { label: 'STATUS.TODO', color: '#2196f3', pct: 0 },
-      { label: 'STATUS.IN_PROGRESS', color: '#ff9800', pct: Math.round((s.inProgressTasks / total) * 100) },
-      { label: 'STATUS.DONE', color: '#4caf50', pct: Math.round((s.doneTasks / total) * 100) }
+      { label: 'STATUS.DONE',        color: '#4caf50', value: s.doneTasks,       pct: Math.round((s.doneTasks / total) * 100) },
+      { label: 'STATUS.IN_PROGRESS', color: '#ff9800', value: s.inProgressTasks, pct: Math.round((s.inProgressTasks / total) * 100) },
+      { label: 'STATUS.REVIEW',      color: '#9c27b0', value: s.reviewTasks,     pct: Math.round((s.reviewTasks / total) * 100) },
+      { label: 'STATUS.TESTING',     color: '#00bcd4', value: s.testingTasks,    pct: Math.round((s.testingTasks / total) * 100) },
+      { label: 'STATUS.TODO',        color: '#2196f3', value: s.openTasks,       pct: Math.round((s.openTasks / total) * 100) },
+      { label: 'STATUS.BACKLOG',     color: '#9e9e9e', value: s.backlogTasks,    pct: Math.round((s.backlogTasks / total) * 100) },
     ];
   });
 
@@ -58,26 +60,22 @@ export class DashboardComponent implements OnInit {
     const s = this.summary();
     if (!s) return 'conic-gradient(#e0e0e0 0% 100%)';
     const total = s.totalTasks || 1;
-    const donePct = (s.doneTasks / total) * 100;
-    const inProgressPct = (s.inProgressTasks / total) * 100;
-    const openPct = (s.openTasks / total) * 100;
-    const backlogPct = Math.max(0, 100 - donePct - inProgressPct - openPct);
-    let pos = 0;
     const segments: string[] = [];
-    if (donePct > 0) {
-      segments.push(`#4caf50 ${pos}% ${pos + donePct}%`);
-      pos += donePct;
-    }
-    if (inProgressPct > 0) {
-      segments.push(`#ff9800 ${pos}% ${pos + inProgressPct}%`);
-      pos += inProgressPct;
-    }
-    if (openPct > 0) {
-      segments.push(`#2196f3 ${pos}% ${pos + openPct}%`);
-      pos += openPct;
-    }
-    if (backlogPct > 0) {
-      segments.push(`#9e9e9e ${pos}% 100%`);
+    let pos = 0;
+    const slices = [
+      { color: '#4caf50', count: s.doneTasks },
+      { color: '#ff9800', count: s.inProgressTasks },
+      { color: '#9c27b0', count: s.reviewTasks },
+      { color: '#00bcd4', count: s.testingTasks },
+      { color: '#2196f3', count: s.openTasks },
+      { color: '#9e9e9e', count: s.backlogTasks },
+    ];
+    for (const slice of slices) {
+      const pct = (slice.count / total) * 100;
+      if (pct > 0) {
+        segments.push(`${slice.color} ${pos}% ${pos + pct}%`);
+        pos += pct;
+      }
     }
     return segments.length ? `conic-gradient(${segments.join(', ')})` : 'conic-gradient(#e0e0e0 0% 100%)';
   });

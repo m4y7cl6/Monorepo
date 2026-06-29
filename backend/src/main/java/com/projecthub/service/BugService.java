@@ -73,7 +73,7 @@ public class BugService {
 
         Bug bug = bugMapper.toEntity(request);
         bug.setProject(project);
-        bug.setStatus(BugStatus.OPEN);
+        bug.setStatus(BugStatus.NEW);
 
         if (request.assigneeId() != null) {
             User assignee = userRepository.findById(request.assigneeId())
@@ -114,6 +114,9 @@ public class BugService {
         }
         if (request.priority() != null) {
             bug.setPriority(request.priority());
+        }
+        if (request.status() != null) {
+            bug.setStatus(request.status());
         }
 
         if (request.assigneeId() != null) {

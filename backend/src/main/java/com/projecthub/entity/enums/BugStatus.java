@@ -1,9 +1,12 @@
 package com.projecthub.entity.enums;
 
 public enum BugStatus {
-    OPEN,
+    NEW,
+    CONFIRMED,
     IN_PROGRESS,
-    RESOLVED,
+    FIXED,
+    VERIFIED,
     CLOSED,
-    REJECTED
+    REOPENED,
+    WONT_FIX
 }

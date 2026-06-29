@@ -1,5 +1,6 @@
 package com.projecthub.dto;
 
+import com.projecthub.entity.enums.RequirementStatus;
 import com.projecthub.entity.enums.TaskPriority;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,5 +22,7 @@ public record RequirementCreateRequest(
 
         String description,
 
-        TaskPriority priority
+        TaskPriority priority,
+
+        RequirementStatus status
 ) {}

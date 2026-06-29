@@ -42,7 +42,7 @@ public class Bug {
     @Enumerated(EnumType.STRING)
     @Column(name = "severity", nullable = false, length = 50)
     @Builder.Default
-    private BugSeverity severity = BugSeverity.MEDIUM;
+    private BugSeverity severity = BugSeverity.MINOR;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false, length = 50)
@@ -52,7 +52,7 @@ public class Bug {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
     @Builder.Default
-    private BugStatus status = BugStatus.OPEN;
+    private BugStatus status = BugStatus.NEW;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee_id")

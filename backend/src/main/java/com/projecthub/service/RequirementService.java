@@ -86,6 +86,9 @@ public class RequirementService {
         if (request.priority() != null) {
             requirement.setPriority(request.priority());
         }
+        if (request.status() != null) {
+            requirement.setStatus(request.status());
+        }
 
         Requirement saved = requirementRepository.save(requirement);
         log.info("Updated requirement: {}", saved.getId());

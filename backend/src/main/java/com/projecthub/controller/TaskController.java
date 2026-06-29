@@ -100,7 +100,8 @@ public class TaskController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TaskDto> updateStatus(
             @PathVariable UUID id,
-            @Parameter(description = "New task status") @RequestParam TaskStatus status) {
+            @RequestBody java.util.Map<String, String> body) {
+        TaskStatus status = TaskStatus.valueOf(body.get("status"));
         return ResponseEntity.ok(taskService.updateStatus(id, status));
     }
 

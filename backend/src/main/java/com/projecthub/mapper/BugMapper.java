@@ -28,5 +28,6 @@ public interface BugMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
+    @BeanMapping(ignoreUnmappedSourceProperties = {"dueDate"})
     Bug toEntity(BugCreateRequest request);
 }

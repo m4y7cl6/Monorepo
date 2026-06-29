@@ -75,26 +75,15 @@
               </div>
             </div>
             <div class="chart-legend">
-              <div class="legend-item">
-                <span class="legend-dot" style="background:#4caf50"></span>
-                <span>{{ 'STATUS.DONE' | translate }}</span>
-                <span class="legend-val">{{ s.doneTasks }}</span>
-              </div>
-              <div class="legend-item">
-                <span class="legend-dot" style="background:#ff9800"></span>
-                <span>{{ 'STATUS.IN_PROGRESS' | translate }}</span>
-                <span class="legend-val">{{ s.inProgressTasks }}</span>
-              </div>
-              <div class="legend-item">
-                <span class="legend-dot" style="background:#2196f3"></span>
-                <span>{{ 'STATUS.TODO' | translate }}</span>
-                <span class="legend-val">{{ s.openTasks }}</span>
-              </div>
-              <div class="legend-item">
-                <span class="legend-dot" style="background:#9e9e9e"></span>
-                <span>{{ 'STATUS.BACKLOG' | translate }}</span>
-                <span class="legend-val">{{ s.totalTasks - s.doneTasks - s.inProgressTasks - s.openTasks }}</span>
-              </div>
+              @for (item of taskStatusChartData(); track item.label) {
+                @if (item.value > 0) {
+                  <div class="legend-item">
+                    <span class="legend-dot" [style.background]="item.color"></span>
+                    <span>{{ item.label | translate }}</span>
+                    <span class="legend-val">{{ item.value }}</span>
+                  </div>
+                }
+              }
             </div>
           </div>
         </mat-card-content>

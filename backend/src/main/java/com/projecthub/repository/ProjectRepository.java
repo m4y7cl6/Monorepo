@@ -25,6 +25,8 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     Optional<Project> findByIdAndDeletedAtIsNull(UUID id);
 
+    long countByDeletedAtIsNull();
+
     @Query("SELECT COUNT(p) FROM Project p WHERE p.deletedAt IS NULL AND p.status = :status")
     long countByStatusAndDeletedAtIsNull(ProjectStatus status);
 

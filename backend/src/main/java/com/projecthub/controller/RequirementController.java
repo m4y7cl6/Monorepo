@@ -87,7 +87,8 @@ public class RequirementController {
     @PreAuthorize("hasAnyRole('ADMIN', 'PM', 'LEADER')")
     public ResponseEntity<RequirementDto> updateStatus(
             @PathVariable UUID id,
-            @Parameter(description = "New requirement status") @RequestParam RequirementStatus status) {
+            @RequestBody java.util.Map<String, String> body) {
+        RequirementStatus status = RequirementStatus.valueOf(body.get("status"));
         return ResponseEntity.ok(requirementService.updateStatus(id, status));
     }
 
