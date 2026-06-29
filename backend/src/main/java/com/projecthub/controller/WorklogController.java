@@ -1,5 +1,6 @@
 package com.projecthub.controller;
 
+import com.projecthub.dto.PageResponse;
 import com.projecthub.dto.WorklogCreateRequest;
 import com.projecthub.dto.WorklogDto;
 import com.projecthub.entity.User;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +39,13 @@ public class WorklogController {
     }
 
     @GetMapping
-    @Operation(summary = "List all worklogs")
+    @Operation(summary = "List all worklogs with pagination")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<WorklogDto>> getAll() {
-        return ResponseEntity.ok(worklogService.findAll());
+    public ResponseEntity<PageResponse<WorklogDto>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(worklogService.findAll(
+                PageRequest.of(page, size, Sort.by("workDate").descending())));
     }
 
     @GetMapping("/{id}")
@@ -64,14 +70,17 @@ public class WorklogController {
     }
 
     @GetMapping("/range")
-    @Operation(summary = "List worklogs by date range")
+    @Operation(summary = "List worklogs by date range with pagination")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<WorklogDto>> getByDateRange(
+    public ResponseEntity<PageResponse<WorklogDto>> getByDateRange(
             @Parameter(description = "Start date (yyyy-MM-dd)")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "End date (yyyy-MM-dd)")
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return ResponseEntity.ok(worklogService.findByDateRange(startDate, endDate));
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(worklogService.findByDateRange(startDate, endDate,
+                PageRequest.of(page, size, Sort.by("workDate").descending())));
     }
 
     @PostMapping

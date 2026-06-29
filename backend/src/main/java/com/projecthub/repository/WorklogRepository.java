@@ -1,6 +1,8 @@
 package com.projecthub.repository;
 
 import com.projecthub.entity.Worklog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,8 @@ public interface WorklogRepository extends JpaRepository<Worklog, UUID> {
     List<Worklog> findByUserId(UUID userId);
 
     List<Worklog> findByWorkDateBetween(LocalDate startDate, LocalDate endDate);
+
+    Page<Worklog> findByWorkDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
     List<Worklog> findByUserIdAndWorkDateBetween(UUID userId, LocalDate startDate, LocalDate endDate);
 

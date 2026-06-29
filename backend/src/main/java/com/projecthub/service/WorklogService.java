@@ -1,5 +1,6 @@
 package com.projecthub.service;
 
+import com.projecthub.dto.PageResponse;
 import com.projecthub.dto.WorklogCreateRequest;
 import com.projecthub.dto.WorklogDto;
 import com.projecthub.entity.Task;
@@ -12,6 +13,8 @@ import com.projecthub.repository.UserRepository;
 import com.projecthub.repository.WorklogRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +43,14 @@ public class WorklogService {
         this.worklogMapper = worklogMapper;
     }
 
+    public PageResponse<WorklogDto> findAll(Pageable pageable) {
+        Page<Worklog> page = worklogRepository.findAll(pageable);
+        return new PageResponse<>(
+                page.getContent().stream().map(worklogMapper::toDto).toList(),
+                page.getTotalElements(), page.getTotalPages(),
+                page.getNumber(), page.getSize());
+    }
+
     public List<WorklogDto> findAll() {
         return worklogMapper.toDtoList(worklogRepository.findAll());
     }
@@ -56,6 +67,14 @@ public class WorklogService {
 
     public List<WorklogDto> findByUserId(UUID userId) {
         return worklogMapper.toDtoList(worklogRepository.findByUserId(userId));
+    }
+
+    public PageResponse<WorklogDto> findByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        Page<Worklog> page = worklogRepository.findByWorkDateBetween(startDate, endDate, pageable);
+        return new PageResponse<>(
+                page.getContent().stream().map(worklogMapper::toDto).toList(),
+                page.getTotalElements(), page.getTotalPages(),
+                page.getNumber(), page.getSize());
     }
 
     public List<WorklogDto> findByDateRange(LocalDate startDate, LocalDate endDate) {
