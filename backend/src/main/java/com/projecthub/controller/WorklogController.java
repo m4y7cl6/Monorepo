@@ -2,6 +2,9 @@ package com.projecthub.controller;
 
 import com.projecthub.dto.WorklogCreateRequest;
 import com.projecthub.dto.WorklogDto;
+import com.projecthub.entity.User;
+import com.projecthub.exception.ResourceNotFoundException;
+import com.projecthub.repository.UserRepository;
 import com.projecthub.service.WorklogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +14,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,9 +28,11 @@ import java.util.UUID;
 public class WorklogController {
 
     private final WorklogService worklogService;
+    private final UserRepository userRepository;
 
-    public WorklogController(WorklogService worklogService) {
+    public WorklogController(WorklogService worklogService, UserRepository userRepository) {
         this.worklogService = worklogService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -70,9 +77,25 @@ public class WorklogController {
     @PostMapping
     @Operation(summary = "Create a new worklog entry")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<WorklogDto> create(@Valid @RequestBody WorklogCreateRequest request) {
-        WorklogDto created = worklogService.create(request);
+    public ResponseEntity<WorklogDto> create(
+            @Valid @RequestBody WorklogCreateRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID resolvedUserId = resolveUserId(request.userId(), jwt);
+        WorklogCreateRequest resolved = new WorklogCreateRequest(
+                request.taskId(), resolvedUserId, request.workDate(),
+                request.hours(), request.description());
+        WorklogDto created = worklogService.create(resolved);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    private UUID resolveUserId(UUID requestUserId, Jwt jwt) {
+        if (requestUserId != null) {
+            return requestUserId;
+        }
+        String username = jwt.getClaimAsString("preferred_username");
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        return user.getId();
     }
 
     @PutMapping("/{id}")

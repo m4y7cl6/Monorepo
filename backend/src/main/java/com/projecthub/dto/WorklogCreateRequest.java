@@ -11,7 +11,6 @@ public record WorklogCreateRequest(
         @NotNull(message = "Task ID is required")
         UUID taskId,
 
-        @NotNull(message = "User ID is required")
         UUID userId,
 
         @NotNull(message = "Work date is required")
