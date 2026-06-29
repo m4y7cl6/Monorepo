@@ -17,12 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/projects")
 @Tag(name = "Projects", description = "Project lifecycle management")
 public class ProjectController {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of("createdAt", "updatedAt", "name", "code", "status", "startDate", "endDate");
 
     private final ProjectService projectService;
 
@@ -39,9 +43,10 @@ public class ProjectController {
             @Parameter(description = "Sort field") @RequestParam(defaultValue = "createdAt") String sortBy,
             @Parameter(description = "Sort direction") @RequestParam(defaultValue = "desc") String direction) {
 
+        String safeSort = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
         Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
+                ? Sort.by(safeSort).ascending()
+                : Sort.by(safeSort).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(projectService.findAll(pageable));
     }

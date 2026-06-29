@@ -169,16 +169,18 @@ class ProjectControllerTest {
 
         @Test
         @WithMockUser(roles = "ADMIN")
-        @DisplayName("create_withInvalidBody_returns400")
-        void create_withInvalidBody_returns400() throws Exception {
-            // code is blank — violates @NotBlank
+        @DisplayName("create_withBlankCode_returns422UnprocessableEntity")
+        void create_withBlankCode_returns422UnprocessableEntity() throws Exception {
+            // GlobalExceptionHandler maps MethodArgumentNotValidException -> 422
             ProjectCreateRequest invalidRequest = new ProjectCreateRequest(
                     "", "Some Name", null, null, null, null, null);
 
             mockMvc.perform(post("/api/projects")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(invalidRequest)))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isUnprocessableEntity())
+                    .andExpect(jsonPath("$.title").value("Validation Error"))
+                    .andExpect(jsonPath("$.fieldErrors.code").exists());
         }
     }
 

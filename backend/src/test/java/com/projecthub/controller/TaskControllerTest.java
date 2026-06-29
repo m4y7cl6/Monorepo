@@ -159,9 +159,9 @@ class TaskControllerTest {
 
         @Test
         @WithMockUser(roles = "DEVELOPER")
-        @DisplayName("create_withInvalidBody_returns400")
-        void create_withInvalidBody_returns400() throws Exception {
-            // taskNo is blank — violates @NotBlank
+        @DisplayName("create_withBlankTaskNo_returns422UnprocessableEntity")
+        void create_withBlankTaskNo_returns422UnprocessableEntity() throws Exception {
+            // GlobalExceptionHandler maps MethodArgumentNotValidException -> 422
             TaskCreateRequest invalid = new TaskCreateRequest(
                     "", TestDataFactory.PROJECT_ID, null,
                     "Some title", null, null, null, null, null, null, null, null);
@@ -169,7 +169,9 @@ class TaskControllerTest {
             mockMvc.perform(post("/api/tasks")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(invalid)))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isUnprocessableEntity())
+                    .andExpect(jsonPath("$.title").value("Validation Error"))
+                    .andExpect(jsonPath("$.fieldErrors.taskNo").exists());
         }
     }
 
