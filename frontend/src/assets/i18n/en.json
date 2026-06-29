@@ -223,6 +223,15 @@
     "FILTER_TYPE": "Filter Type",
     "EMPTY_COLUMN": "Drag tasks here"
   },
+  "ERRORS": {
+    "ACTIVE_SPRINT_EXISTS": "This project already has an active sprint. Complete it before activating another.",
+    "INVALID_SPRINT_STATE": "This operation is not allowed in the current sprint state.",
+    "CANNOT_DELETE_ACTIVE_SPRINT": "Cannot delete an active sprint. Complete it first.",
+    "DUPLICATE_TASK_NO": "Task number already exists.",
+    "DUPLICATE_BUG_NO": "Bug number already exists.",
+    "DUPLICATE_REQ_NO": "Requirement number already exists.",
+    "DUPLICATE_CODE": "Project code already exists."
+  },
   "SPRINT": {
     "TITLE": "Sprint Management",
     "NEW": "New Sprint",

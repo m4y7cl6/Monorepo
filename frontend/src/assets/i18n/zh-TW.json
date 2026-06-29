@@ -223,6 +223,15 @@
     "FILTER_TYPE": "篩選類型",
     "EMPTY_COLUMN": "拖曳任務至此"
   },
+  "ERRORS": {
+    "ACTIVE_SPRINT_EXISTS": "此專案已有進行中的 Sprint，請先完成後再啟動新的",
+    "INVALID_SPRINT_STATE": "Sprint 狀態不允許此操作",
+    "CANNOT_DELETE_ACTIVE_SPRINT": "無法刪除進行中的 Sprint，請先完成後再刪除",
+    "DUPLICATE_TASK_NO": "任務編號已存在",
+    "DUPLICATE_BUG_NO": "問題編號已存在",
+    "DUPLICATE_REQ_NO": "需求編號已存在",
+    "DUPLICATE_CODE": "專案代碼已存在"
+  },
   "SPRINT": {
     "TITLE": "Sprint 管理",
     "NEW": "新增 Sprint",

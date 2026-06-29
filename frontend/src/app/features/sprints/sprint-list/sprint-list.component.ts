@@ -134,12 +134,7 @@ export class SprintListComponent implements OnInit {
           },
           error: (err: HttpErrorResponse) => {
             this.isLoading.set(false);
-            const detail = err.error?.detail;
-            if (detail) {
-              this.snackBar.open(detail, '', { duration: 5000, panelClass: ['snack-error'] });
-            } else {
-              this.showError('SPRINT.ACTIVATE_ERROR');
-            }
+            this.showBackendError(err, 'SPRINT.ACTIVATE_ERROR');
           }
         });
       }
@@ -163,12 +158,7 @@ export class SprintListComponent implements OnInit {
           },
           error: (err: HttpErrorResponse) => {
             this.isLoading.set(false);
-            const detail = err.error?.detail;
-            if (detail) {
-              this.snackBar.open(detail, '', { duration: 5000, panelClass: ['snack-error'] });
-            } else {
-              this.showError('SPRINT.COMPLETE_ERROR');
-            }
+            this.showBackendError(err, 'SPRINT.COMPLETE_ERROR');
           }
         });
       }
@@ -205,6 +195,22 @@ export class SprintListComponent implements OnInit {
       this.loadSprintsByProject(projectId);
     } else {
       this.loadAllSprints();
+    }
+  }
+
+  private showBackendError(err: HttpErrorResponse, fallbackKey: string): void {
+    const errorCode = err.error?.errorCode;
+    if (errorCode) {
+      const i18nKey = `ERRORS.${errorCode}`;
+      this.translate.get(i18nKey).subscribe((msg) => {
+        // ngx-translate returns the key itself when no translation is found
+        const message = msg !== i18nKey ? msg : (err.error?.detail ?? '');
+        this.snackBar.open(message, '', { duration: 5000, panelClass: ['snack-error'] });
+      });
+    } else if (err.error?.detail) {
+      this.snackBar.open(err.error.detail, '', { duration: 5000, panelClass: ['snack-error'] });
+    } else {
+      this.showError(fallbackKey);
     }
   }
 
