@@ -26,11 +26,13 @@
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true,
       "redirectUris": [
+        "http://localhost/*",
         "http://localhost:4200/*",
         "http://localhost:80/*",
         "http://frontend/*"
       ],
       "webOrigins": [
+        "http://localhost",
         "http://localhost:4200",
         "http://localhost:80",
         "http://frontend"
