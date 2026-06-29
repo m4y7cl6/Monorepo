@@ -1,25 +1,22 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Build backend JAR and frontend dist, then launch Docker Compose.
+    Build backend JAR locally, then launch Docker Compose.
+    Frontend is built inside Docker (node:20-alpine) to avoid local Node version constraints.
 
 .PARAMETER SkipBackend
     Skip Maven build (use existing target/*.jar).
 
-.PARAMETER SkipFrontend
-    Skip Angular build (use existing dist/).
-
 .PARAMETER NoDeploy
-    Build artifacts only; do not run docker compose up.
+    Build JAR only; do not run docker compose up.
 
 .EXAMPLE
-    .\build.ps1                   # Full build + docker compose up
-    .\build.ps1 -SkipFrontend     # Skip frontend, rebuild backend only
-    .\build.ps1 -NoDeploy         # Build both but don't start containers
+    .\build.ps1              # Build backend JAR + docker compose up (frontend built in Docker)
+    .\build.ps1 -SkipBackend # Skip Maven, use existing JAR, then docker compose up
+    .\build.ps1 -NoDeploy    # Build JAR only
 #>
 param(
     [switch]$SkipBackend,
-    [switch]$SkipFrontend,
     [switch]$NoDeploy
 )
 
@@ -59,34 +56,17 @@ if (-not $SkipBackend) {
     Write-Host "[SKIP] Backend build skipped" -ForegroundColor Yellow
 }
 
-# ─── 2. Frontend (Angular) ──────────────────────────────────────────────────
-if (-not $SkipFrontend) {
-    Write-Step "Building frontend (npm run build:prod)"
-    Push-Location "$Root\frontend"
-    npm install --legacy-peer-deps --silent
-    Assert-ExitCode "npm install"
-    npm run build:prod
-    Assert-ExitCode "ng build"
-    Pop-Location
-    Write-Host "[OK] Frontend dist ready: frontend/dist/projecthub-frontend/browser/" -ForegroundColor Green
-} else {
-    Write-Host "[SKIP] Frontend build skipped" -ForegroundColor Yellow
-}
+# ─── 2. Frontend ─────────────────────────────────────────────────────────────
+Write-Host "[INFO] Frontend will be built inside Docker (node:20-alpine) — no local Node required." -ForegroundColor DarkGray
 
-# ─── 3. Verify artifacts exist ──────────────────────────────────────────────
-Write-Step "Verifying artifacts"
+# ─── 3. Verify backend JAR exists ────────────────────────────────────────────
+Write-Step "Verifying backend artifact"
 $jar = Get-Item "$Root\backend\target\projecthub-backend-*.jar" -ErrorAction SilentlyContinue
 if (-not $jar) {
     Write-Host "[ERROR] No JAR found in backend/target/. Run without -SkipBackend." -ForegroundColor Red
     exit 1
 }
-$dist = "$Root\frontend\dist\projecthub-frontend\browser\index.html"
-if (-not (Test-Path $dist)) {
-    Write-Host "[ERROR] No frontend dist found. Run without -SkipFrontend." -ForegroundColor Red
-    exit 1
-}
 Write-Host "[OK] JAR: $($jar.Name)" -ForegroundColor Green
-Write-Host "[OK] Frontend dist: frontend/dist/projecthub-frontend/browser/" -ForegroundColor Green
 
 # ─── 4. Docker Compose ──────────────────────────────────────────────────────
 if (-not $NoDeploy) {
