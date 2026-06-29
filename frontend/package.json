@@ -30,6 +30,6 @@
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
     "@schematics/angular": "^20.0.0",
-    "typescript": "~5.5.0"
+    "typescript": "~5.8.0"
   }
 }

@@ -1,22 +1,20 @@
 @use '@angular/material' as mat;
 
-@include mat.core();
-
-$primary-palette: mat.define-palette(mat.$indigo-palette);
-$accent-palette: mat.define-palette(mat.$blue-palette, A200, A100, A400);
-$warn-palette: mat.define-palette(mat.$red-palette);
-
-$theme: mat.define-light-theme((
+// Angular Material 3 theme (M3 API — replaces deprecated define-palette)
+$theme: mat.define-theme((
   color: (
-    primary: $primary-palette,
-    accent: $accent-palette,
-    warn: $warn-palette,
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
   ),
-  typography: mat.define-typography-config(),
-  density: 0,
+  density: (
+    scale: 0,
+  ),
 ));
 
-@include mat.all-component-themes($theme);
+html {
+  @include mat.all-component-themes($theme);
+}
 
 html,
 body {
