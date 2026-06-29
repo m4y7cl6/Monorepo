@@ -44,11 +44,7 @@ public class WorklogService {
     }
 
     public PageResponse<WorklogDto> findAll(Pageable pageable) {
-        Page<Worklog> page = worklogRepository.findAll(pageable);
-        return new PageResponse<>(
-                page.getContent().stream().map(worklogMapper::toDto).toList(),
-                page.getTotalElements(), page.getTotalPages(),
-                page.getNumber(), page.getSize());
+        return PageResponse.from(worklogRepository.findAll(pageable).map(worklogMapper::toDto));
     }
 
     public List<WorklogDto> findAll() {
@@ -70,11 +66,8 @@ public class WorklogService {
     }
 
     public PageResponse<WorklogDto> findByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        Page<Worklog> page = worklogRepository.findByWorkDateBetween(startDate, endDate, pageable);
-        return new PageResponse<>(
-                page.getContent().stream().map(worklogMapper::toDto).toList(),
-                page.getTotalElements(), page.getTotalPages(),
-                page.getNumber(), page.getSize());
+        return PageResponse.from(
+                worklogRepository.findByWorkDateBetween(startDate, endDate, pageable).map(worklogMapper::toDto));
     }
 
     public List<WorklogDto> findByDateRange(LocalDate startDate, LocalDate endDate) {
